@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #111;
+  color: white;
+}
+
+#gameArea {
+  width: 100%;
+  max-width: 400px;
+  height: 600px;
+  margin: 20px auto;
+  position: relative;
+  background: #222;
+  border: 2px solid #555;
+  overflow: hidden;
+  touch-action: none; /* مهم للجوال */
+}
+
+#player {
+  width: 50px;
+  height: 50px;
+  background: cyan;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px;
+}
+
+.enemy {
+  width: 40px;
+  height: 40px;
+  background: red;
+  position: absolute;
+  top: 0;
+  border-radius: 5px;
+}
+
+#scoreBoard {
+  font-size: 18px;
+}
