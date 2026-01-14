@@ -31,14 +31,29 @@ isRunning=true;
 gameLoop();
 }
 
-window.addEventListener("mousemove", e=>{
-if(!isRunning)return;
-let x=e.clientX-30;if(x<0)x=0;if(x>window.innerWidth-60)x=window.innerWidth-60;
-player.style.left=x+"px";
+// --- حركة الصاروخ بالماوس ---
+window.addEventListener("mousemove", e => {
+    movePlayer(e.clientX);
 });
 
+// --- حركة الصاروخ باللمس (جوال) ---
+window.addEventListener("touchmove", e => {
+    e.preventDefault(); // منع التمرير الطبيعي للشاشة
+    movePlayer(e.touches[0].clientX);
+}, {passive:false});
+
+// دالة تحريك الصاروخ مشتركة
+function movePlayer(x){
+    if(!isRunning) return;
+    let newX = x - 30; // تصحيح منتصف الصاروخ
+    if(newX < 0) newX = 0;
+    if(newX > window.innerWidth - 60) newX = window.innerWidth - 60;
+    player.style.left = newX + "px";
+}
+
+// --- إطلاق الليزر ---
 function fireLaser(){
-if(!isRunning)return;
+if(!isRunning) return;
 const l=document.createElement("div");
 l.className="laser";
 l.style.left=(player.offsetLeft+28)+"px";
@@ -50,17 +65,20 @@ laserSound.currentTime=0;laserSound.play();
 
 function startFiring() { fireLaser(); fireInterval=setInterval(fireLaser,200);}
 function stopFiring() {clearInterval(fireInterval); fireInterval=null;}
+
 fireBtn.addEventListener("mousedown", startFiring);
 fireBtn.addEventListener("mouseup", stopFiring);
 fireBtn.addEventListener("mouseleave", stopFiring);
 fireBtn.addEventListener("touchstart",(e)=>{e.preventDefault(); startFiring();},{passive:false});
 fireBtn.addEventListener("touchend", stopFiring);
 
+// --- تشغيل/إيقاف الموسيقى ---
 musicBtn.addEventListener("click", ()=>{
 if(bgMusic.paused){bgMusic.play(); musicBtn.textContent="إيقاف الموسيقى";}
 else{bgMusic.pause(); musicBtn.textContent="تشغيل الموسيقى";}
 });
 
+// --- انفجار العدو ---
 function explode(x,y){
 const ex=document.createElement("div");
 ex.className="explosion";
@@ -70,6 +88,7 @@ setTimeout(()=>ex.remove(),400);
 explosionSound.currentTime=0;explosionSound.play();
 }
 
+// --- إنشاء العدو ---
 function spawnEnemy(){
 const e=document.createElement("div");e.className="enemy";
 e.style.background="url('"+enemyImgs[Math.floor(Math.random()*enemyImgs.length)]+"') no-repeat center";
@@ -79,8 +98,9 @@ battleField.appendChild(e);
 enemies.push({el:e,y:-60,s:(2+Math.random()*2)});
 }
 
+// --- حلقة اللعبة الرئيسية ---
 function gameLoop(){
-if(!isRunning)return;
+if(!isRunning) return;
 for(let i=lasers.length-1;i>=0;i--){
 lasers[i].y-=10;
 lasers[i].el.style.top=lasers[i].y+"px";
@@ -101,7 +121,7 @@ continue;
 for(let j=lasers.length-1;j>=0;j--){
 let lr=lasers[j].el.getBoundingClientRect();
 if(!(lr.right<er.left||lr.left>er.right||lr.bottom<er.top||lr.top>er.bottom)){
-score+=10;scoreVal.textContent=score;
+score+=1;scoreVal.textContent=score;
 explode(er.left,er.top);
 e.el.remove();enemies.splice(i,1);
 lasers[j].el.remove();lasers.splice(j,1);break;
@@ -113,14 +133,16 @@ if(Math.random()<0.02)spawnEnemy();
 requestAnimationFrame(gameLoop);
 }
 
+// --- إنهاء اللعبة ---
 function endGame(){
 isRunning=false; bgMusic.pause();
 if(score>highScore){highScore=score;localStorage.setItem("highScore",highScore);}
+document.getElementById("gameOverScreen").style.display="flex";
 finalScore.textContent=score; finalHighScore.textContent=highScore;
 rankText.textContent=getRank(score);
-document.getElementById("gameOverScreen").style.display="flex";
 }
 
+// --- تحديد رتبة اللاعب ---
 function getRank(s){
 if(s<100)return"🟢 مبتدئ";
 if(s<300)return"🔵 محترف";
