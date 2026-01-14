@@ -35,20 +35,18 @@ gameLoop();
 }
 
 // --- حركة الصاروخ بالماوس ---
-window.addEventListener("mousemove", e => {
-    movePlayer(e.clientX);
-});
+window.addEventListener("mousemove", e => { movePlayer(e.clientX); });
 
 // --- حركة الصاروخ باللمس (جوال) ---
 window.addEventListener("touchmove", e => {
-    e.preventDefault(); // منع التمرير الطبيعي للشاشة
+    e.preventDefault();
     movePlayer(e.touches[0].clientX);
 }, {passive:false});
 
 // دالة تحريك الصاروخ مشتركة
 function movePlayer(x){
     if(!isRunning) return;
-    let newX = x - 30; // تصحيح منتصف الصاروخ
+    let newX = x - 30;
     if(newX < 0) newX = 0;
     if(newX > window.innerWidth - 60) newX = window.innerWidth - 60;
     player.style.left = newX + "px";
@@ -66,34 +64,52 @@ lasers.push({el:l,y:player.offsetTop});
 laserSound.currentTime=0;laserSound.play();
 }
 
-function startFiring() { fireLaser(); fireInterval=setInterval(fireLaser,200);}
-function stopFiring() {clearInterval(fireInterval); fireInterval=null;}
+// --- وظائف إطلاق النار ---
+function startFiring() {
+    if (!fireInterval) fireLaser(); // اطلاق أول مرة فوراً
+    if (!fireInterval) fireInterval = setInterval(fireLaser, 200);
+}
+function stopFiring() {
+    if (fireInterval && !autoFire) { // توقف فقط إذا الوضع يدوي
+        clearInterval(fireInterval);
+        fireInterval = null;
+    }
+}
 
-// --- زر إطلاق النار (يدوي و تلقائي بالضغط المزدوج على الجوال) ---
-fireBtn.addEventListener("mousedown", startFiring);
+// --- زر إطلاق النار (يدوي وتلقائي بالضغط المزدوج للجوال) ---
+// الكمبيوتر / الماوس
+fireBtn.addEventListener("mousedown", () => { if(!autoFire) startFiring(); });
 fireBtn.addEventListener("mouseup", stopFiring);
 fireBtn.addEventListener("mouseleave", stopFiring);
 
-// --- دعم الضغط المزدوج على الجوال لتبديل الوضع ---
+// الجوال
 fireBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();
     let currentTime = new Date().getTime();
     let tapLength = currentTime - lastTap;
-    if(tapLength < 400 && tapLength > 0){ 
-        // لمستين سريعتين → تبديل الوضع
+
+    if (tapLength < 400 && tapLength > 0) {
+        // لمستين → تبديل الوضع
         autoFire = !autoFire;
-        if(autoFire){ 
-            fireBtn.textContent = "🚀 تلقائي"; 
-            startFiring(); 
-        } else { 
-            fireBtn.textContent = "🚀 إطلاق النار"; 
-            stopFiring(); 
+        if (autoFire) {
+            fireBtn.textContent = "🚀 تلقائي";
+            startFiring(); // يبدأ الإطلاق التلقائي فوراً
+        } else {
+            fireBtn.textContent = "🚀 إطلاق النار";
+            stopFiring(); // توقف الإطلاق التلقائي
         }
-    } 
+    } else {
+        // لمسة واحدة → إطلاق يدوي إذا الوضع يدوي
+        if (!autoFire) startFiring();
+    }
+
     lastTap = currentTime;
 }, {passive:false});
 
-fireBtn.addEventListener("touchend", stopFiring);
+fireBtn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    stopFiring(); // توقف اليدوي فقط
+}, {passive:false});
 
 // --- تشغيل/إيقاف الموسيقى ---
 musicBtn.addEventListener("click", ()=>{
