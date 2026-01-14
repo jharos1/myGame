@@ -1,23 +1,53 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لعبتي المتقدمة</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPACE WAR HD</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>لعبة المتقدمة</h1>
-  <div id="gameArea">
-    <div id="player"></div>
-  </div>
+<div id="startScreen" class="overlay">
+<h1>SPACE WAR HD 🚀</h1>
+<p>اختر مستوى الصعوبة:</p>
+<select id="diffLevel">
+<option value="1">مبتدئ</option>
+<option value="2">محترف</option>
+<option value="3">أسطوري</option>
+</select>
+<button class="play-btn" onclick="initGame()">ابدأ المهمة</button>
+</div>
 
-  <div id="scoreBoard">
-    النقاط: <span id="score">0</span>
-    | حياة: <span id="lives">3</span>
-  </div>
+<div id="gameContainer" style="display:none">
+<div id="topBar">
+<div>النقاط: <span id="scoreVal">0</span></div>
+<div>أعلى نتيجة: <span id="highScoreVal">0</span></div>
+<div id="livesVal">❤️❤️❤️</div>
+<button class="play-btn" onclick="endGame()">إنهاء</button>
+</div>
+<div id="battleField">
+<div class="stars-layer1"></div>
+<div class="stars-layer2"></div>
+<div id="player"><div class="thrust-fire"></div></div>
+</div>
+<button id="fireBtn">🔥</button>
+<button id="musicBtn">تشغيل الموسيقى</button>
+</div>
 
-  <script src="script.js"></script>
+<div id="gameOverScreen" class="overlay" style="display:none">
+<h1>انتهت المهمة 🚀</h1>
+<h2>نقاطك: <span id="finalScore">0</span></h2>
+<h3>أعلى نتيجة: <span id="finalHighScore">0</span></h3>
+<h2 id="rankText"></h2>
+<button class="play-btn" onclick="location.reload()">إعادة اللعب</button>
+</div>
+
+<audio id="laserSound" src="https://freesound.org/data/previews/341/341695_3248244-lq.mp3"></audio>
+<audio id="explosionSound" src="https://freesound.org/data/previews/170/170145_2437358-lq.mp3"></audio>
+<audio id="bgMusic" src="https://freesound.org/data/previews/426/426690_7037-lq.mp3" loop></audio>
+
+<script src="script.js"></script>
 </body>
 </html>
+
