@@ -1,4 +1,7 @@
 let score=0,lives=3,isRunning=false,enemies=[],lasers=[],fireInterval=null;
+let autoFire = false;   // false = يدوي، true = تلقائي
+let lastTap = 0; // لتتبع الوقت بين لمستين على الجوال
+
 const scoreVal=document.getElementById("scoreVal"),
 highScoreVal=document.getElementById("highScoreVal"),
 finalScore=document.getElementById("finalScore"),
@@ -66,10 +69,30 @@ laserSound.currentTime=0;laserSound.play();
 function startFiring() { fireLaser(); fireInterval=setInterval(fireLaser,200);}
 function stopFiring() {clearInterval(fireInterval); fireInterval=null;}
 
+// --- زر إطلاق النار (يدوي و تلقائي بالضغط المزدوج على الجوال) ---
 fireBtn.addEventListener("mousedown", startFiring);
 fireBtn.addEventListener("mouseup", stopFiring);
 fireBtn.addEventListener("mouseleave", stopFiring);
-fireBtn.addEventListener("touchstart",(e)=>{e.preventDefault(); startFiring();},{passive:false});
+
+// --- دعم الضغط المزدوج على الجوال لتبديل الوضع ---
+fireBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    let currentTime = new Date().getTime();
+    let tapLength = currentTime - lastTap;
+    if(tapLength < 400 && tapLength > 0){ 
+        // لمستين سريعتين → تبديل الوضع
+        autoFire = !autoFire;
+        if(autoFire){ 
+            fireBtn.textContent = "🚀 تلقائي"; 
+            startFiring(); 
+        } else { 
+            fireBtn.textContent = "🚀 إطلاق النار"; 
+            stopFiring(); 
+        }
+    } 
+    lastTap = currentTime;
+}, {passive:false});
+
 fireBtn.addEventListener("touchend", stopFiring);
 
 // --- تشغيل/إيقاف الموسيقى ---

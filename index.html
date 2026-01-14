@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SPACE WAR HD</title>
+<title>ooh tseer</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="startScreen" class="overlay">
-<h1>يزيد دز امها 🚀</h1>
+<h1>  العب وتخيل انك في واسط 🚀</h1>
 <p>اختر مستوى الصعوبة:</p>
 <select id="diffLevel">
 <option value="1">مبتدئ</option>
@@ -17,13 +17,14 @@
 <option value="3">أسطوري</option>
 </select>
 <button class="play-btn" onclick="initGame()">ابدأ المهمة</button>
+<button id="musicBtn">تشغيل الموسيقى</button>
 </div>
 
 <div id="gameContainer" style="display:none">
 <div id="topBar">
 <div>النقاط: <span id="scoreVal">0</span></div>
 <div>أعلى نتيجة: <span id="highScoreVal">0</span></div>
-<div id="livesVal">❤️❤️❤️</div>
+<div id="livesVal">❤️❤️❤️❤️</div>
 <button class="play-btn" onclick="endGame()">إنهاء</button>
 </div>
 <div id="battleField">
@@ -32,7 +33,7 @@
 <div id="player"><div class="thrust-fire"></div></div>
 </div>
 <button id="fireBtn">🔥</button>
-<button id="musicBtn">تشغيل الموسيقى</button>
+
 </div>
 
 <div id="gameOverScreen" class="overlay" style="display:none">
